@@ -519,26 +519,28 @@ creatures.on_step = function(self, dtime)
     -- change eaten node when mode changes
     if self.eat_node then
       local n = core.get_node_or_nil(self.eat_node)
-      local nnn = n.name
-      local def = core.registered_nodes[n.name]
-      local sounds
-      if def then
-         if def.drop and type(def.drop) == "string" then
-           nnn = def.drop
-         elseif not def.walkable then
-           nnn = "air"
-         end
-      end
-      if nnn and nnn ~= n.name and core.registered_nodes[nnn] then
-        core.set_node(self.eat_node, {name = nnn})
-        if not sounds then
-          sounds = def.sounds
+      if n then
+        local nnn = n.name
+        local def = core.registered_nodes[n.name]
+        local sounds
+        if def then
+           if def.drop and type(def.drop) == "string" then
+             nnn = def.drop
+           elseif not def.walkable then
+             nnn = "air"
+           end
         end
-        if sounds and sounds.dug then
-          core.sound_play(sounds.dug, {pos = self.eat_node, max_hear_distance = 5, gain = 1})
+        if nnn and nnn ~= n.name and core.registered_nodes[nnn] then
+          core.set_node(self.eat_node, {name = nnn})
+          if not sounds then
+            sounds = def.sounds
+          end
+          if sounds and sounds.dug then
+            core.sound_play(sounds.dug, {pos = self.eat_node, max_hear_distance = 5, gain = 1})
+          end
         end
+        self.eat_node = nil
       end
-      self.eat_node = nil
     end
   end
 
